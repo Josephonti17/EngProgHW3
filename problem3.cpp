@@ -68,7 +68,7 @@ private:
 
 int main() {
     std::cout << "--- Build collection A from sample.txt ---\n";
-    TextCollection a("sample.txt");
+    TextCollection a("word_index_test.txt");
     a.printAll();
     std::cout << "A owner count = " << a.ownerCount() << "\n\n";
 
