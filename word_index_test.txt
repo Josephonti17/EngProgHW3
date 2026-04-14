@@ -1,0 +1,10 @@
+C++ is a powerful language.
+This language is widely used in systems programming.
+Many systems rely on C++ for performance and control.
+Programming in C++ requires careful memory management.
+The C++ standard library provides powerful containers.
+Containers like map and set are very useful.
+This file is used to test word indexing.
+Word indexing maps words to line numbers.
+This test file contains repeated words words words.
+C++ appears on many lines in this file.
