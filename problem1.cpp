@@ -1,7 +1,3 @@
-// Problem 1 - Text Processing with Generic Algorithms
-//
-// Joseph
-//
 // Reads a text file, normalizes each word (lowercase + no punctuation),
 // then uses STL algorithms to sort, dedupe, and count long words.
 // No range-based for loops or operator[] are used for data processing.
@@ -25,13 +21,13 @@ static std::string normalize(std::string w) {
                    [](unsigned char c) { return std::tolower(c); });
     return w;
 }
-
+//argc is the number of command-line arguments, If the user didn't pass a filename, bail out.
 int main(int argc, char* argv[]) {
     if (argc < 2) {
         std::cerr << "Usage: " << argv[0] << " <textfile>\n";
-        return 1;
+        return 1;  // non-zero exit code = failure
     }
-
+    //Try to open the file the user specified.
     std::ifstream in(argv[1]);
     if (!in) {
         std::cerr << "Error: could not open file \"" << argv[1] << "\"\n";
