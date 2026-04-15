@@ -16,7 +16,7 @@ This directory contains my solutions for HW3. Each problem lives in its own
 | `problem2.cpp` | Word-to-line-number index using `map<string, set<int>>` |
 | `problem3.cpp` | `TextCollection` class with `shared_ptr` ownership |
 | `bonus.cpp` | `TextCollection` with a custom deleter that logs destruction |
-| `sample.txt` | Small text file used for testing |
+| `word_index_test.txt` | Text file used as input for all demos below |
 
 ## Build instructions
 
@@ -32,10 +32,10 @@ g++ -std=c++11 -Wall -Wextra -o bonus    bonus.cpp
 ## Run instructions
 
 ```bash
-./problem1 sample.txt
-./problem2 sample.txt        # then type words to query, Ctrl+D to quit
-./problem3                   # reads sample.txt automatically
-./bonus                      # shows the custom deleter firing
+./problem1 word_index_test.txt
+./problem2 word_index_test.txt    # then type words to query, Ctrl+Z then Enter to quit
+./problem3                        # reads word_index_test.txt automatically
+./bonus                           # shows the custom deleter firing
 ```
 
 ---
@@ -54,14 +54,14 @@ Key algorithms used:
 - `std::unique` + `erase` — to remove duplicates
 - `std::count_if` — to count words with `length >= 6`
 
-**Sample output (using `sample.txt`):**
+**Sample output (using `word_index_test.txt`):**
 ```
-Total number of words:           53
-Number of unique words:          38
-Number of words with length >=6: 15
+Total number of words:           75
+Number of unique words:          46
+Number of words with length >=6: 21
 ```
 
-*(Screenshot placeholder: insert `problem1_output.png` here)*
+![Problem 1 output](problem1_output.png)
 
 ---
 
@@ -74,19 +74,31 @@ sorted and de-duplicated, and `map` gives O(log n) keyed lookup by word.
 
 After indexing, the user can repeatedly type a word. The program prints the
 sorted list of line numbers, or an appropriate message if the word isn't in
-the file. Querying ends when `cin` hits EOF (Ctrl+D / Ctrl+Z).
+the file. Querying ends when `cin` hits EOF (Ctrl+Z then Enter on Windows,
+Ctrl+D on Linux/Mac).
 
 **Sample interaction:**
 ```
-Enter word to search: apple
-apple occurs on lines: 2 5
-Enter word to search: fox
-fox occurs on lines: 1 3 6
+Enter word to search: language
+language occurs on lines: 1 2
+Enter word to search: systems
+systems occurs on lines: 2 3
+Enter word to search: words
+words occurs on lines: 8 9
+Enter word to search: C++
+c occurs on lines: 1 3 4 5 10
 Enter word to search: xyzzy
 "xyzzy" was not found in the file.
 ```
 
-*(Screenshot placeholder: insert `problem2_output.png` here)*
+Note that `"words"` appears three times on line 9 of the file
+(`"...repeated words words words."`) but only shows up once in the output
+— `set<int>` automatically dedupes line numbers. Also note that `"C++"` is
+normalized to `"c"` because the `+` characters are stripped as punctuation,
+which matches the assignment's rule that *"words are considered distinct if
+they differ by capitalization or punctuation."*
+
+![Problem 2 output](problem2_output.png)
 
 ---
 
@@ -108,13 +120,13 @@ through the other. When the last owner goes out of scope, the vector is
 destroyed automatically — no manual `delete`, no leaks.
 
 The `main()` function demonstrates:
-1. Building collection `A` from `sample.txt`
+1. Building collection `A` from `word_index_test.txt`
 2. Copying `A` into `B` (both share the vector — owner count goes to 2)
 3. Adding a word through `B` and showing `A` sees it too
 4. Removing a word through `A` and showing `B` sees the removal
 5. An independent collection `C` that does NOT affect `A`
 
-*(Screenshot placeholder: insert `problem3_output.png` here)*
+![Problem 3 output](problem3_output.png)
 
 ---
 
@@ -148,4 +160,4 @@ Notice that no `[deleter]` message prints when the inner scope ends — only
 when `main` returns. This is exactly the last-owner-wins behavior the problem
 asks for.
 
-*(Screenshot placeholder: insert `bonus_output.png` here)*
+![Bonus output](bonus_output.png)
