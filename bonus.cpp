@@ -1,17 +1,3 @@
-// Bonus Problem - Custom Deleter and Resource Logging
-// EE 5102 / EE 4953 - Homework 3
-// Joseph
-//
-// Same idea as Problem 3, but the shared_ptr is constructed with
-// a custom deleter lambda that prints a message when the vector
-// is actually destroyed. This only happens when the LAST owner
-// goes out of scope, which we demonstrate with a nested block.
-//
-// Note: when attaching a custom deleter you can't use make_shared,
-// so we give shared_ptr a raw `new` pointer plus the lambda. The
-// shared_ptr still fully owns it -- the only `delete` is inside
-// the deleter itself.
-
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -21,6 +7,9 @@
 
 class TextCollection {
 public:
+    // The lambda here is the custom deleter -- it runs exactly once,
+    // when the refcount drops to zero, and is the ONLY place we delete.
+    // Note: can't use make_shared when attaching a custom deleter.
     TextCollection()
         : data(new std::vector<std::string>(),
                [](std::vector<std::string>* p) {
@@ -29,8 +18,9 @@ public:
                    delete p;
                }) {}
 
+    // delegating ctor so we reuse the custom-deleter setup above
     explicit TextCollection(const std::string& filename)
-        : TextCollection()  // delegate so we reuse the custom deleter
+        : TextCollection()
     {
         std::ifstream in(filename);
         if (!in) {
@@ -75,6 +65,7 @@ int main() {
     std::cout << "outer owner count = " << outer.ownerCount() << "\n";
 
     {
+        // inner lives only inside this block -- refcount goes 1 -> 2
         std::cout << "\n-- entering inner scope, copying outer into inner --\n";
         TextCollection inner = outer;
         inner.addWord("gamma");
@@ -84,12 +75,15 @@ int main() {
                   << " (2 because inner shares the vector)\n";
         std::cout << "-- leaving inner scope: deleter should NOT fire yet --\n";
     }
+    // inner is destroyed here, refcount drops back to 1, but the
+    // vector survives because outer is still alive.
 
     std::cout << "\nBack in main. outer owner count = "
               << outer.ownerCount() << " (back to 1)\n";
     std::cout << "outer still sees: ";
     outer.printAll();
 
+    // when main returns, outer dies -> refcount 0 -> deleter fires
     std::cout << "\n-- about to return from main: deleter SHOULD fire now --\n";
     return 0;
 }
