@@ -1,11 +1,3 @@
-// Problem 3 - Dynamic Memory and Object Lifetime
-//
-// TextCollection wraps a vector<string> inside a std::shared_ptr.
-// Copying a TextCollection gives you a second "view" that shares
-// the exact same underlying vector -- so adding or removing a word
-// through one view is visible through every other view that shares
-// the same control block. The vector is destroyed automatically
-// when the last owner goes out of scope (RAII, no raw new/delete).
 
 #include <iostream>
 #include <fstream>
